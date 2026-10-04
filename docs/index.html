@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101719">
+  <meta name="description" content="Joleen’s fifty-state license plate photo collection. Every find, from the first plate to the last.">
+  <title>Joleen’s Collection — State by State</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="topbar"><a class="brand" href="./" aria-label="State by State home"><span class="brand-mark">50</span> STATE BY STATE<span class="brand-dot">.</span></a><span class="top-label">JOLEEN’S LICENSE PLATE COLLECTION</span></header>
+  <main>
+    <section class="intro">
+      <div><p class="eyebrow">ONE COUNTRY. FIFTY FINDS.</p><h1>Joleen’s finds.<br><span>A lot of miles.</span></h1><p class="description">Every plate has a place. Every find has a story.</p></div>
+      <div class="progress-panel"><div class="progress-numbers"><strong id="count">0</strong><span>/ 50<span>STATES COLLECTED</span></span><div id="percent">0%</div></div><div class="progress-track" role="progressbar" aria-label="States collected" aria-valuemin="0" aria-valuemax="50" aria-valuenow="0"><div id="progress-fill"></div></div><p id="progress-caption">Your next adventure starts with the first plate.</p></div>
+    </section>
+    <section class="collection" aria-label="Joleen’s license plate collection">
+      <div class="toolbar"><div class="collection-title"><h2>The collection</h2><span id="view-caption">ALL 50 STATES · A–Z</span></div><div class="view-switch" role="group" aria-label="Collection view"><button id="grid-toggle" aria-pressed="true"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 3h5v5H3zM12 3h5v5h-5zM3 12h5v5H3zM12 12h5v5h-5z"/></svg>Grid</button><button id="map-toggle" aria-pressed="false"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m2 5 5-2 6 2 5-2v12l-5 2-6-2-5 2ZM7 3v12m6-10v12"/></svg>Map</button></div></div>
+      
+      <div id="grid" class="grid" aria-label="States in alphabetical order"></div>
+      <div id="map-view" hidden><div class="map-toolbar"><p>Fifty states. One open road.</p><div class="legend"><span><i class="collected-dot"></i>Collected</span><span><i></i>Still looking</span></div></div><div id="map-container" class="map-container"><p>Loading map…</p></div><div class="map-bottom"><span id="map-hint">Select a collected state to view its photo.</span><span>ALASKA & HAWAII SHOWN AS INSETS</span></div><div id="small-states" class="small-states" aria-label="Small states"></div></div>
+    </section>
+    <footer><span><span class="footer-star">✳</span> LITTLE FINDS. BIG MEMORIES.</span><span>Joleen’s collection · Shared from the open road.</span></footer>
+  </main>
+  <dialog id="photo-dialog" aria-labelledby="dialog-title"><div class="dialog-heading"><div><p class="eyebrow" id="dialog-code"></p><h2 id="dialog-title"></h2></div><button class="icon-button" id="close-dialog" aria-label="Close photo">×</button></div><div id="photo-stage"></div><p id="dialog-status" class="dialog-status"></p></dialog>
+  
+</body>
+</html>
