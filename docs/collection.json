@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "revision": "32aeceee-b900-437e-bd8f-90e893474963",
+  "revision": "30d8e356-68ec-4362-beee-db2aa5766600",
   "plates": {
     "CA": {
       "url": "photos/CA.jpg",
@@ -143,6 +143,15 @@
         "x": 0.054677,
         "y": 0,
         "width": 0.890646,
+        "height": 1
+      }
+    },
+    "OH": {
+      "url": "photos/OH-4564c123-7dc5-4ae8-8557-ba05e947ebeb.jpg",
+      "crop": {
+        "x": 0.034977,
+        "y": 0,
+        "width": 0.930046,
         "height": 1
       }
     }
