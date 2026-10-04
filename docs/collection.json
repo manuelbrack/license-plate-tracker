@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "revision": "06259ab4-3ad7-4075-ad28-ce3b06f75408",
+  "revision": "81fec9c9-b210-449a-bcdc-70812a6b2365",
   "plates": {
     "CA": {
       "url": "photos/CA.jpg"
@@ -37,6 +37,9 @@
     },
     "WA": {
       "url": "photos/WA.jpg"
+    },
+    "OK": {
+      "url": "photos/OK-fe3c109f-e5f4-463e-b34e-f895c69390ff.jpg"
     }
   }
 }
