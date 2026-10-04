@@ -1,4 +1,4 @@
-# State by State
+# Joleen’s Collection — State by State
 
 A local license plate photo tracker, built with plain HTML/CSS/JavaScript and a Python standard-library server. No package installation or accounts required.
 
