@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "revision": "initial-collection",
+  "revision": "06259ab4-3ad7-4075-ad28-ce3b06f75408",
   "plates": {
     "CA": {
       "url": "photos/CA.jpg"
@@ -28,9 +28,6 @@
     },
     "NV": {
       "url": "photos/NV.jpg"
-    },
-    "OK": {
-      "url": "photos/OK.jpg"
     },
     "OR": {
       "url": "photos/OR.jpg"
