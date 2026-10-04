@@ -6,7 +6,7 @@
   <meta name="description" content="Joleen’s fifty-state license plate photo collection. Every find, from the first plate to the last.">
   <title>Joleen’s Collection — State by State</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="styles.css">
-  <script src="data.js" defer></script><script src="github-client.js" defer></script><script src="photo-convert.js" defer></script><script src="app.js" defer></script>
+  <script src="data.js" defer></script><script src="github-client.js" defer></script><script src="photo-convert.js" defer></script><script src="crop-preview.js" defer></script><script src="app.js" defer></script>
 </head>
 <body>
   <header class="topbar"><a class="brand" href="./" aria-label="State by State home"><span class="brand-mark">50</span> STATE BY STATE<span class="brand-dot">.</span></a><span class="top-label">JOLEEN’S LICENSE PLATE COLLECTION</span></header>
@@ -36,7 +36,18 @@
 <dialog id="upload-dialog" aria-labelledby="upload-title">
   <h2 id="upload-title">One more for the collection.</h2>
   <label for="upload-state">State</label><select id="upload-state"></select>
-  <div id="upload-preview"></div>
+  <section id="crop-editor" hidden aria-label="Choose grid thumbnail crop">
+    <p class="crop-heading">Grid preview</p>
+    <p id="crop-instructions" class="upload-note">Drag the photo to frame the plate, or use the controls below. Arrow keys move the crop.</p>
+    <div id="upload-preview" tabindex="0" role="group" aria-label="Move grid preview crop" aria-describedby="crop-instructions"></div>
+    <div class="crop-controls">
+      <label for="crop-zoom">Zoom</label><input id="crop-zoom" type="range" min="1" max="6" step="0.01" value="1">
+      <label for="crop-x">Horizontal position</label><input id="crop-x" type="range" min="0" max="100" step="0.1" value="50">
+      <label for="crop-y">Vertical position</label><input id="crop-y" type="range" min="0" max="100" step="0.1" value="50">
+      <button id="crop-reset" class="secondary-button" type="button">Reset crop</button>
+    </div>
+    <p class="upload-note">Only the grid preview is cropped. The state photo viewer keeps the full photo.</p>
+  </section>
   <input id="upload-file" type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif" hidden>
   <button id="choose-photo" class="secondary-button">Choose photo</button>
   <p id="upload-note" class="upload-note"></p>

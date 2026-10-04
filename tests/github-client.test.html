@@ -29,6 +29,20 @@
     }
     api.validateManifest({version: 1, revision: 'a', plates: {WA: {url: 'photos/WA.jpg'}}});
   });
+  await test('Crop validation permits bounded fractions and rejects malformed rectangles', async () => {
+    const crop = {x: 0.2, y: 0.3, width: 0.5, height: 0.4};
+    const validated = api.validateCrop(crop);
+    assert(JSON.stringify(validated) === JSON.stringify(crop) && validated !== crop, 'Crop validation returns a sanitized clone');
+    const rounded = api.validateCrop({x: 0.5, y: 0, width: 0.5000001, height: 1});
+    assert(rounded.width === 0.5, 'Tiny rounding overflow is clamped to the image');
+    const invalid = [null, [], {x: 0, y: 0, width: 1}, {x: 0, y: 0, width: 1, height: 1, extra: true},
+      {...crop, x: -0.1}, {...crop, y: 1.1}, {...crop, width: 0}, {...crop, height: -0.1},
+      {...crop, x: 1, width: 0.00000001}, {...crop, width: 0.9}, {...crop, height: 0.9},
+      {...crop, x: NaN}, {...crop, y: Infinity}, {...crop, width: '0.5'}];
+    for (const value of invalid) await rejects(() => api.validateCrop(value), 'crop');
+    api.validateManifest({version: 1, revision: 'a', plates: {WA: {url: 'photos/WA.jpg', crop}}});
+    await rejects(() => api.validateManifest({version: 1, revision: 'a', plates: {WA: {url: 'photos/WA.jpg', crop: {...crop, width: 2}}}}), 'manifest');
+  });
   function mock({race = false, changedState = false, uncertain = false} = {}) {
     const calls = [], manifests = [], refs = [];
     let reads = 0;
@@ -79,6 +93,23 @@
     assert(saved.commit === 'newcommit1', 'Commit must be returned');
     assert(saved.manifest.plates.CA.url === 'photos/CA.jpg' && saved.manifest.custom === 'preserve', 'Existing state and metadata must remain');
     assert(data.refs.length === 1, 'Exactly one update expected');
+  });
+  await test('Overview crop is committed alongside unchanged full photo bytes', async () => {
+    const data = mock();
+    const bytes = new Uint8Array([255, 216, 255, 0, 1, 100, 200, 255, 217]);
+    const crop = {x: 0.2, y: 0.3, width: 0.5, height: 0.4};
+    const saved = await api.createClient('fake-test-token').uploadPhoto({state: 'WA', blob: new Blob([bytes], {type: 'image/jpeg'}), expectedEntry: null, crop});
+    assert(JSON.stringify(saved.manifest.plates.WA.crop) === JSON.stringify(crop), 'Crop must persist in the state entry');
+    assert(JSON.stringify(data.manifests[0].plates.WA.crop) === JSON.stringify(crop), 'Crop and photo must share one commit');
+    const photo = data.calls.filter(call => call.path === '/git/blobs' && call.body.encoding === 'base64');
+    assert(photo.length === 1, 'Exactly one full photo blob expected');
+    assert(atob(photo[0].body.content) === String.fromCharCode(...bytes), 'Overview crop must not modify full photo bytes');
+    assert(data.refs.length === 1, 'Exactly one atomic update expected');
+  });
+  await test('Invalid crop fails before any GitHub request', async () => {
+    const data = mock();
+    await rejects(() => api.createClient('fake-test-token').uploadPhoto({state: 'WA', blob: new Blob(['jpeg-test'], {type: 'image/jpeg'}), expectedEntry: null, crop: {x: 0, y: 0, width: 2, height: 1}}), 'crop');
+    assert(data.calls.length === 0, 'Invalid crop must fail before reading or writing GitHub');
   });
   await test('Different state racing commit is preserved on safe retry', async () => {
     const data = mock({race: true});

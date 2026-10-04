@@ -45,10 +45,21 @@
       return token;
     } catch (_) { throw failure('unlock', 'Could not unlock. Check the passphrase and try again.'); }
   }
+  function validateCrop(crop) {
+    const fields = ['x', 'y', 'width', 'height'];
+    if (!crop || typeof crop !== 'object' || Array.isArray(crop) || Object.keys(crop).length !== fields.length || !fields.every(field => Object.prototype.hasOwnProperty.call(crop, field) && Number.isFinite(crop[field]))) throw failure('crop', 'Choose a valid overview crop.');
+    const {x, y, width, height} = crop;
+    if (x < 0 || y < 0 || x >= 1 || y >= 1 || width <= 0 || height <= 0 || width > 1 || height > 1 || x + width > 1 + 1e-6 || y + height > 1 + 1e-6) throw failure('crop', 'The overview crop must stay inside the photo.');
+    return {x, y, width: Math.min(width, 1 - x), height: Math.min(height, 1 - y)};
+  }
   function validateManifest(manifest) {
     if (!manifest || manifest.version !== 1 || typeof manifest.revision !== 'string' || manifest.revision.length > 128 || !manifest.plates || typeof manifest.plates !== 'object' || Array.isArray(manifest.plates)) throw failure('manifest', 'The collection manifest is invalid.');
     for (const [state, entry] of Object.entries(manifest.plates)) {
       if (!STATES.has(state) || !entry || typeof entry !== 'object' || Array.isArray(entry) || typeof entry.url !== 'string' || !/^photos\/[A-Za-z0-9][A-Za-z0-9_-]{0,127}\.(?:jpg|jpeg|png|webp)$/i.test(entry.url)) throw failure('manifest', 'The collection contains an invalid photo path or state.');
+      if (Object.prototype.hasOwnProperty.call(entry, 'crop')) {
+        try { validateCrop(entry.crop); }
+        catch (_) { throw failure('manifest', 'The collection contains an invalid overview crop.'); }
+      }
     }
     return manifest;
   }
@@ -100,15 +111,17 @@
       catch (_) { throw failure('manifest', 'The collection manifest could not be read.'); }
       return {head, tree: commit.tree.sha, manifest: validateManifest(manifest)};
     }
-    async function uploadPhoto({state, blob, expectedEntry}) {
+    async function uploadPhoto({state, blob, expectedEntry, crop}) {
       if (!STATES.has(state) || !(blob instanceof Blob) || blob.type !== 'image/jpeg' || !blob.size || blob.size > 8 * 1024 * 1024 || expectedEntry === undefined) throw failure('photo', 'Choose a valid state and a JPEG photo smaller than 8 MB.');
+      const overviewCrop = crop === undefined ? undefined : validateCrop(crop);
       const url = 'photos/' + state + '-' + crypto.randomUUID() + '.jpg';
       let photoSha;
       for (let attempt = 0; attempt < 3; attempt++) {
         const latest = await readCollection();
         if (canonical(latest.manifest.plates[state] || null) !== canonical(expectedEntry)) throw failure('state-conflict', 'Someone updated this state. Refresh and review its photo before replacing it.');
         if (!photoSha) photoSha = (await request('/git/blobs', 'POST', {content: base64(new Uint8Array(await blob.arrayBuffer())), encoding: 'base64'})).sha;
-        const manifest = {...latest.manifest, revision: crypto.randomUUID(), plates: {...latest.manifest.plates, [state]: {url}}};
+        const entry = overviewCrop === undefined ? {url} : {url, crop: overviewCrop};
+        const manifest = {...latest.manifest, revision: crypto.randomUUID(), plates: {...latest.manifest.plates, [state]: entry}};
         const manifestSha = (await request('/git/blobs', 'POST', {content: JSON.stringify(manifest, null, 2) + '\n', encoding: 'utf-8'})).sha;
         const tree = await request('/git/trees', 'POST', {base_tree: latest.tree, tree: [
           {path: 'docs/' + url, mode: '100644', type: 'blob', sha: photoSha},
@@ -125,5 +138,5 @@
     }
     return Object.freeze({validate, readCollection, uploadPhoto});
   }
-  global.PlateGitHub = Object.freeze({encryptToken, decryptToken, validateManifest, createClient});
+  global.PlateGitHub = Object.freeze({encryptToken, decryptToken, validateCrop, validateManifest, createClient});
 })(window);

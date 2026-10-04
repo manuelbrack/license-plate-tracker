@@ -24,7 +24,7 @@ class StaticExportTests(unittest.TestCase):
         manifest=json.loads((self.output/'collection.json').read_text())
         self.assertEqual(manifest['plates']['WA']['url'],'photos/WA.jpg')
         (self.output/'photos'/'CA-new.jpg').write_bytes(b'browser upload')
-        manifest['plates']['CA']={'url':'photos/CA-new.jpg'}
+        manifest['plates']['CA']={'url':'photos/CA-new.jpg','crop':{'x':0.1,'y':0.3,'width':0.8,'height':0.2}}
         manifest['revision']='browser-revision'
         serialized=json.dumps(manifest)
         (self.output/'collection.json').write_text(serialized)
@@ -39,7 +39,7 @@ class StaticExportTests(unittest.TestCase):
         self.assertIn('id="unlock-passphrase"',html)
         self.assertIn('.heic,.heif',html)
         self.assertIn('id="publish-banner"',html)
-        for script in ['app.js','data.js','github-client.js','photo-convert.js']:
+        for script in ['app.js','data.js','github-client.js','photo-convert.js','crop-preview.js']:
             self.assertTrue((self.output/script).is_file())
     def test_invalid_or_missing_photo_fails_before_writing(self):
         for url in ['/photos/../../personal.jpg','/photos/missing.jpg']:

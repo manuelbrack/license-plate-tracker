@@ -1,45 +1,114 @@
 {
   "version": 1,
-  "revision": "81fec9c9-b210-449a-bcdc-70812a6b2365",
+  "revision": "59cc3436-753a-4013-8e89-96530994df7d",
   "plates": {
     "CA": {
-      "url": "photos/CA.jpg"
+      "url": "photos/CA.jpg",
+      "crop": {
+        "x": 0.19722222,
+        "y": 0.47684426,
+        "width": 0.51666667,
+        "height": 0.15881148
+      }
     },
     "CO": {
-      "url": "photos/CO.jpg"
+      "url": "photos/CO.jpg",
+      "crop": {
+        "x": 0.22222222,
+        "y": 0.57086749,
+        "width": 0.55555556,
+        "height": 0.17076503
+      }
     },
     "FL": {
-      "url": "photos/FL.jpg"
+      "url": "photos/FL.jpg",
+      "crop": {
+        "x": 0.40888889,
+        "y": 0.49802254,
+        "width": 0.36666667,
+        "height": 0.11270492
+      }
     },
     "IL": {
-      "url": "photos/IL.jpg"
+      "url": "photos/IL.jpg",
+      "crop": {
+        "x": 0.27222222,
+        "y": 0.50298839,
+        "width": 0.48888889,
+        "height": 0.15027322
+      }
     },
     "KY": {
-      "url": "photos/KY.jpg"
+      "url": "photos/KY.jpg",
+      "crop": {
+        "x": 0.31111111,
+        "y": 0.42443989,
+        "width": 0.37777778,
+        "height": 0.11612022
+      }
     },
     "MO": {
-      "url": "photos/MO.jpg"
+      "url": "photos/MO.jpg",
+      "crop": {
+        "x": 0.35833333,
+        "y": 0.45558402,
+        "width": 0.35,
+        "height": 0.10758197
+      }
     },
     "NJ": {
-      "url": "photos/NJ.jpg"
+      "url": "photos/NJ.jpg",
+      "crop": {
+        "x": 0.24444444,
+        "y": 0.49870219,
+        "width": 0.57777778,
+        "height": 0.17759563
+      }
     },
     "NM": {
-      "url": "photos/NM.jpg"
+      "url": "photos/NM.jpg",
+      "crop": {
+        "x": 0.26666667,
+        "y": 0.48907104,
+        "width": 0.47777778,
+        "height": 0.14685792
+      }
     },
     "NV": {
-      "url": "photos/NV.jpg"
+      "url": "photos/NV.jpg",
+      "crop": {
+        "x": 0.31666667,
+        "y": 0.46835724,
+        "width": 0.38888889,
+        "height": 0.11953552
+      }
     },
     "OR": {
-      "url": "photos/OR.jpg"
+      "url": "photos/OR.jpg",
+      "crop": {
+        "x": 0.20555556,
+        "y": 0.49928279,
+        "width": 0.53333333,
+        "height": 0.16393443
+      }
     },
     "UT": {
-      "url": "photos/UT.jpg"
+      "url": "photos/UT.jpg",
+      "crop": {
+        "x": 0.28888889,
+        "y": 0.46052254,
+        "width": 0.36666667,
+        "height": 0.11270492
+      }
     },
     "WA": {
-      "url": "photos/WA.jpg"
-    },
-    "OK": {
-      "url": "photos/OK-fe3c109f-e5f4-463e-b34e-f895c69390ff.jpg"
+      "url": "photos/WA.jpg",
+      "crop": {
+        "x": 0.29947917,
+        "y": 0.56114466,
+        "width": 0.49479167,
+        "height": 0.15212474
+      }
     }
   }
 }

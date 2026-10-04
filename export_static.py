@@ -75,7 +75,7 @@ def export_site(root, output=None):
     # Remove server-only status widgets from the static document.
     html = re.sub(r'<p class="error-banner" id="page-error".*?</p>', '', html)
     html = re.sub(r'<div id="toast".*?</div>', '', html)
-    html = replace_once(html, '<script src="app.js" defer></script>', '<script src="data.js" defer></script><script src="github-client.js" defer></script><script src="photo-convert.js" defer></script><script src="app.js" defer></script>')
+    html = replace_once(html, '<script src="app.js" defer></script>', '<script src="data.js" defer></script><script src="github-client.js" defer></script><script src="photo-convert.js" defer></script><script src="crop-preview.js" defer></script><script src="app.js" defer></script>')
     html = replace_once(html, '<main>', '<main><div id="publish-banner" class="publish-banner" role="status" hidden></div>')
     html = replace_once(html, '<section class="collection"', '<div class="editor-bar"><button id="unlock-editor" class="secondary-button" hidden>Unlock editing</button><div id="editor-controls" hidden><button id="add-find" class="primary-button">Add a find</button><button id="lock-editor" class="secondary-button">Lock editing</button></div></div><p id="collection-error" class="error-banner" role="alert" hidden></p><section class="collection"')
     html = replace_once(html, '<p id="dialog-status" class="dialog-status"></p>', '<p id="dialog-status" class="dialog-status"></p><button id="replace-photo" class="primary-button" hidden>Replace photo</button>')
@@ -95,7 +95,7 @@ def export_site(root, output=None):
     (output / 'index.html').write_text(html)
     (output / 'data.js').write_text(script)
     (output / 'styles.css').write_text((dist / 'styles.css').read_text() + (root / 'site' / 'upload.css').read_text())
-    for name in ['app.js', 'github-client.js', 'photo-convert.js']:
+    for name in ['app.js', 'github-client.js', 'photo-convert.js', 'crop-preview.js']:
         shutil.copyfile(root / 'site' / name, output / name)
     shutil.copytree(root / 'site' / 'vendor', output / 'vendor', dirs_exist_ok=True)
     config = published / 'upload-config.json'

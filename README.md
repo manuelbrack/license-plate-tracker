@@ -76,3 +76,5 @@ python3 -m unittest -v test_server test_export_static test_setup_upload
 US map: [us-atlas 3](https://github.com/topojson/us-atlas), ISC license, derived from US Census Bureau boundaries. See `MAP-LICENSE.txt`.
 
 HEIC decoder: vendored `heic-to` 1.6.5 and libheif, LGPL-3.0-or-later. See `site/vendor/README.txt` and accompanying licenses, also distributed with the published site.
+
+Uploads include a grid preview editor: drag to reposition, zoom, use horizontal/vertical sliders, or adjust with arrow keys. Crop metadata is saved alongside the full photo; only overview thumbnails use it. Opening a state always shows the full image. HEIC conversion happens before choosing the preview crop.

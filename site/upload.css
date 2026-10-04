@@ -10,3 +10,13 @@ body:not(.editing) .map-state:not(.collected):hover{fill:#3b494d;stroke:var(--pa
 #unlock-dialog{max-width:460px}dialog label{display:block;margin:20px 0 8px;font-size:14px}dialog input:not([type=file]),dialog select{display:block;width:100%;background:#101719;color:var(--white);border:1px solid #576569;padding:12px;font:inherit;border-radius:7px}
 #unlock-form .dialog-actions{margin-top:20px}#upload-preview img{max-width:100%;max-height:280px;display:block;margin:18px auto;border-radius:8px}#upload-dialog .dialog-actions{margin-top:24px}#choose-photo{margin-top:16px}#replace-photo{margin-top:4px}
 @media(max-width:700px){.editor-bar{margin-top:4px}.editor-bar button{font-size:14px}}
+/* The same normalized rectangle is shown in the crop editor and grid. */
+.plate img.cropped-thumbnail,#upload-preview img.cropped-thumbnail{position:absolute;max-width:none;max-height:none;object-fit:fill;margin:0;border-radius:0;pointer-events:none;user-select:none}
+#upload-preview{position:relative;overflow:hidden;width:100%;aspect-ratio:1.83;background:#101719;border:1px solid var(--lime);border-radius:10px;cursor:grab;touch-action:none;margin:14px 0}
+#upload-preview.dragging{cursor:grabbing}
+#upload-preview:focus-visible{outline:3px solid var(--lime);outline-offset:4px}
+.crop-heading{font-size:16px;font-weight:600;margin:22px 0 6px}
+.crop-controls{display:grid;grid-template-columns:145px minmax(0,1fr);gap:12px 18px;align-items:center}
+.crop-controls label{margin:0;font-size:14px}.crop-controls input[type=range]{width:100%;padding:0;accent-color:var(--lime);border:0;height:24px;margin:0}.crop-controls button{grid-column:2;justify-self:end;padding:8px 12px}
+#upload-dialog{max-height:92dvh}
+@media(max-width:500px){.crop-controls{grid-template-columns:115px minmax(0,1fr);gap:10px}.crop-controls label{font-size:13px}}

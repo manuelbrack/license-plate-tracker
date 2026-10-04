@@ -39,7 +39,7 @@ for (const [index, [code, name]] of STATES.entries()) {
   const plate = document.createElement('div'); plate.className = 'plate';
   if (entry) {
     const img = document.createElement('img'); img.src = entry.url;
-    img.alt = `${name} license plate`; img.loading = 'lazy'; plate.append(img);
+    img.alt = `${name} license plate`; img.loading = 'lazy'; PlateCrop.apply(img, entry.crop); plate.append(img);
     const badge = document.createElement('span'); badge.className = 'check-badge';
     badge.textContent = '✓'; plate.append(badge);
   } else {
@@ -125,6 +125,7 @@ function loadMap() {
   }
 }
 
+let cropEditor = null;
 let envelope = null, uploadBlob = null, previewUrl = null, busy = false, idleTimer, publishTimer;
 const pendingKey = 'joleen-pending-publication-v1';
 const apiRoot = 'https://api.github.com/repos/manuelbrack/license-plate-tracker';
@@ -132,7 +133,7 @@ function message(id, text) { $(id).textContent = text; $(id).hidden = !text; }
 function banner(text, kind = '') { $('publish-banner').textContent = text; $('publish-banner').dataset.kind = kind; $('publish-banner').hidden = !text; }
 function setBusy(value) {
   busy = value;
-  for (const id of ['save-photo','choose-photo','upload-state','cancel-upload','lock-editor']) $(id).disabled = value;
+  for (const id of ['save-photo','choose-photo','upload-state','cancel-upload','lock-editor','crop-zoom','crop-x','crop-y','crop-reset']) $(id).disabled = value;
 }
 async function jsonFetch(url) {
   const response = await fetch(url, {cache:'no-store', signal:AbortSignal.timeout(20000)});
@@ -186,6 +187,7 @@ for (const [code,name] of STATES) {
   const option=document.createElement('option'); option.value=code; option.textContent=name; $('upload-state').append(option);
 }
 function clearUpload() {
+  cropEditor?.destroy(); cropEditor=null; $('crop-editor').hidden=true;
   if(previewUrl) URL.revokeObjectURL(previewUrl);
   previewUrl=null; uploadBlob=null; $('upload-file').value=''; $('upload-preview').replaceChildren(); $('save-photo').disabled=true;
 }
@@ -206,7 +208,9 @@ $('upload-file').onchange = async event => {
   clearUpload();setBusy(true);message('upload-error','');message('upload-note','Preparing your photo…');
   try {
     uploadBlob=await PlatePhotos.prepare(file);previewUrl=URL.createObjectURL(uploadBlob);
-    const img=document.createElement('img');img.src=previewUrl;img.alt='Photo selected for upload';$('upload-preview').append(img);
+    const img=document.createElement('img');img.src=previewUrl;img.alt='Grid thumbnail preview';await img.decode();$('upload-preview').append(img);
+    cropEditor=PlateCrop.create(img,$('upload-preview'),{zoomInput:$('crop-zoom'),xInput:$('crop-x'),yInput:$('crop-y'),resetButton:$('crop-reset')});
+    $('crop-editor').hidden=false;
     message('upload-note','Ready to publish · '+Math.round(uploadBlob.size/1024)+' KB');
   } catch(error){message('upload-error',error.message||'This photo could not be opened.');}
   finally{setBusy(false);$('save-photo').disabled=!uploadBlob;keepUnlocked();}
@@ -219,11 +223,11 @@ $('save-photo').onclick = async () => {
   if(PLATES[state]&&!confirm('Replace the published photo for '+STATES.find(s=>s[0]===state)[1]+'?'))return;
   setBusy(true);message('upload-error','');banner('Saving photo…');
   try {
-    const result=await editor.uploadPhoto({state,blob:uploadBlob,expectedEntry:PLATES[state]||null});
+    const result=await editor.uploadPhoto({state,blob:uploadBlob,expectedEntry:PLATES[state]||null,crop:cropEditor.getCrop()});
     const pending={commit:result.commit,revision:result.manifest.revision,state,url:result.manifest.plates[state].url,started:Date.now()};
     rememberPending(pending);
     // Preview only; the public JSON remains authoritative after the next load.
-    PLATES={...result.manifest.plates,[state]:{url:previewUrl}}; previewUrl=null;
+    PLATES={...result.manifest.plates,[state]:{...result.manifest.plates[state],url:previewUrl}}; previewUrl=null;
     $('upload-dialog').close();renderCollection();
     banner('Photo saved · Publishing…');watchPublication(pending);
   }catch(error){
