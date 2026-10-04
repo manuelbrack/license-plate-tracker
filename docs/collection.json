@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "revision": "initial-collection",
+  "plates": {
+    "CA": {
+      "url": "photos/CA.jpg"
+    },
+    "CO": {
+      "url": "photos/CO.jpg"
+    },
+    "FL": {
+      "url": "photos/FL.jpg"
+    },
+    "IL": {
+      "url": "photos/IL.jpg"
+    },
+    "KY": {
+      "url": "photos/KY.jpg"
+    },
+    "MO": {
+      "url": "photos/MO.jpg"
+    },
+    "NJ": {
+      "url": "photos/NJ.jpg"
+    },
+    "NM": {
+      "url": "photos/NM.jpg"
+    },
+    "NV": {
+      "url": "photos/NV.jpg"
+    },
+    "OK": {
+      "url": "photos/OK.jpg"
+    },
+    "OR": {
+      "url": "photos/OR.jpg"
+    },
+    "UT": {
+      "url": "photos/UT.jpg"
+    },
+    "WA": {
+      "url": "photos/WA.jpg"
+    }
+  }
+}

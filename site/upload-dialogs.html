@@ -1,0 +1,19 @@
+<dialog id="unlock-dialog" aria-labelledby="unlock-title">
+  <h2 id="unlock-title">Keep the collection growing.</h2>
+  <p class="dialog-status">Enter the passphrase to add Joleen’s latest finds.</p>
+  <form id="unlock-form"><label for="unlock-passphrase">Passphrase</label><input id="unlock-passphrase" type="password" autocomplete="current-password" required>
+  <p id="unlock-error" class="error-banner" role="alert" hidden></p>
+  <div class="dialog-actions"><button id="submit-unlock" class="primary-button" type="submit">Unlock</button><button id="cancel-unlock" class="secondary-button" type="button">Cancel</button></div></form>
+  <p class="upload-note">Editing locks after 15 minutes of inactivity or when you reload.</p>
+</dialog>
+<dialog id="upload-dialog" aria-labelledby="upload-title">
+  <h2 id="upload-title">One more for the collection.</h2>
+  <label for="upload-state">State</label><select id="upload-state"></select>
+  <div id="upload-preview"></div>
+  <input id="upload-file" type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif" hidden>
+  <button id="choose-photo" class="secondary-button">Choose photo</button>
+  <p id="upload-note" class="upload-note"></p>
+  <p class="upload-note">This photo will be public. Publishing usually takes a minute or two.</p>
+  <p id="upload-error" class="error-banner" role="alert" hidden></p>
+  <div class="dialog-actions"><button id="save-photo" class="primary-button" disabled>Publish photo</button><button id="cancel-upload" class="secondary-button">Cancel</button></div>
+</dialog>

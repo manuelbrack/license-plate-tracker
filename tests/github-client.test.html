@@ -1,0 +1,104 @@
+<!doctype html><meta charset="utf-8"><title>GitHub client tests</title>
+<pre id="results">Running…</pre>
+<script src="../site/github-client.js"></script>
+<script>
+(async () => {
+  const results = [], originalFetch = window.fetch;
+  const assert = (value, message) => { if (!value) throw new Error(message); };
+  async function rejects(action, code) {
+    try { await action(); } catch (error) { assert(error.code === code, `Expected ${code}, received ${error.code}`); return; }
+    throw new Error('Expected rejection');
+  }
+  async function test(name, action) {
+    try { await action(); results.push('PASS ' + name); }
+    catch (error) { results.push('FAIL ' + name + ': ' + error.message); }
+  }
+  const api = PlateGitHub;
+  await test('Credential round trip, random salt and IV, wrong password and tamper', async () => {
+    const first = await api.encryptToken('test-token-only', 'six randomly selected test words here');
+    const second = await api.encryptToken('test-token-only', 'six randomly selected test words here');
+    assert(first.salt !== second.salt && first.iv !== second.iv, 'Randomness is required');
+    assert(await api.decryptToken(first, 'six randomly selected test words here') === 'test-token-only', 'Round trip failed');
+    await rejects(() => api.decryptToken(first, 'wrong password'), 'unlock');
+    await rejects(() => api.decryptToken({...first, ciphertext: (first.ciphertext[0] === 'A' ? 'B' : 'A') + first.ciphertext.slice(1)}, 'six randomly selected test words here'), 'unlock');
+    await rejects(() => api.decryptToken({...first, iterations: 600000000}, 'password'), 'credential');
+  });
+  await test('Manifest rejects unknown states and unsafe URLs', async () => {
+    for (const plates of [{ZZ: {url: 'photos/ZZ.jpg'}}, {CA: {url: 'https://example.com/photo.jpg'}}, {CA: {url: 'photos/../secret.jpg'}}]) {
+      await rejects(() => api.validateManifest({version: 1, revision: 'a', plates}), 'manifest');
+    }
+    api.validateManifest({version: 1, revision: 'a', plates: {WA: {url: 'photos/WA.jpg'}}});
+  });
+  function mock({race = false, changedState = false, uncertain = false} = {}) {
+    const calls = [], manifests = [], refs = [];
+    let reads = 0;
+    window.fetch = async (url, options) => {
+      const path = new URL(url).pathname.replace('/repos/manuelbrack/license-plate-tracker', '');
+      const body = options.body ? JSON.parse(options.body) : null;
+      calls.push({path, method: options.method, body});
+      assert(options.cache === 'no-store', 'Requests must bypass cache');
+      assert(options.redirect === 'error', 'Redirects must be rejected');
+      const ok = value => new Response(JSON.stringify(value), {status: 200, headers: {'Content-Type': 'application/json'}});
+      if (path.startsWith('/git/ref/heads/')) { reads++; return ok({object: {sha: 'head' + reads}}); }
+      if (path.startsWith('/git/commits/') && options.method === 'GET') return ok({tree: {sha: 'base' + reads}});
+      if (path === '/contents/docs/collection.json') {
+        assert(new URL(url).searchParams.get('ref') === 'head' + reads, 'Manifest read must be pinned to commit');
+        const plates = {CA: {url: 'photos/CA.jpg'}};
+        if (reads > 1) plates.TX = {url: 'photos/TX.jpg'};
+        if (reads > 1 && changedState) plates.WA = {url: 'photos/WA-other.jpg'};
+        return ok({content: btoa(JSON.stringify({version: 1, revision: 'initial', custom: 'preserve', plates}))});
+      }
+      if (path === '/git/blobs') {
+        if (body.encoding === 'utf-8') manifests.push(JSON.parse(body.content));
+        return ok({sha: body.encoding === 'utf-8' ? 'manifest' + reads : 'photo'});
+      }
+      if (path === '/git/trees') {
+        assert(body.base_tree === 'base' + reads, 'Must preserve latest tree');
+        assert(body.tree.length === 2 && body.tree.some(entry => entry.path === 'docs/collection.json') && body.tree.some(entry => entry.path.startsWith('docs/photos/WA-')), 'Must atomically include photo and manifest');
+        return ok({sha: 'newtree' + reads});
+      }
+      if (path === '/git/commits') {
+        assert(body.parents.length === 1 && body.parents[0] === 'head' + reads, 'Must parent latest commit');
+        return ok({sha: 'newcommit' + reads});
+      }
+      if (path.startsWith('/git/refs/heads/')) {
+        refs.push(body);
+        assert(body.force === false, 'Never force push');
+        if (uncertain) throw new TypeError('Failed to fetch');
+        if (race && reads === 1) return new Response('{}', {status: 422});
+        return ok({object: {sha: body.sha}});
+      }
+      throw new Error('Unexpected request ' + path);
+    };
+    return {calls, manifests, refs};
+  }
+  const upload = () => api.createClient('fake-test-token').uploadPhoto({state: 'WA', blob: new Blob(['jpeg-test'], {type: 'image/jpeg'}), expectedEntry: null});
+  await test('Atomic upload preserves existing photos and metadata', async () => {
+    const data = mock();
+    const saved = await upload();
+    assert(saved.commit === 'newcommit1', 'Commit must be returned');
+    assert(saved.manifest.plates.CA.url === 'photos/CA.jpg' && saved.manifest.custom === 'preserve', 'Existing state and metadata must remain');
+    assert(data.refs.length === 1, 'Exactly one update expected');
+  });
+  await test('Different state racing commit is preserved on safe retry', async () => {
+    const data = mock({race: true});
+    const saved = await upload();
+    assert(saved.manifest.plates.TX.url === 'photos/TX.jpg', 'Racing other state must survive');
+    assert(data.refs.length === 2, 'Expected one safe retry');
+  });
+  await test('Same state racing edit blocks replacement', async () => {
+    const data = mock({race: true, changedState: true});
+    await rejects(upload, 'state-conflict');
+    assert(data.refs.length === 1, 'Must not overwrite racing state');
+  });
+  await test('Uncertain write outcome never blindly retries', async () => {
+    const data = mock({uncertain: true});
+    await rejects(upload, 'uncertain');
+    assert(data.refs.length === 1, 'Must not retry uncertain write');
+  });
+  window.fetch = originalFetch;
+  document.getElementById('results').textContent = results.join('\n');
+  window.testResults = results;
+  document.title = results.some(line => line.startsWith('FAIL')) ? 'FAIL' : 'PASS';
+})();
+</script>

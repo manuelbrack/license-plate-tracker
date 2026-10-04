@@ -1,0 +1,12 @@
+/* Missing states remain passive until editing is unlocked. */
+body:not(.editing) .state-card:not(.collected):hover .plate{border-color:#344043;transform:none}
+body:not(.editing) .state-card:not(.collected):hover .plate-abbr{color:#748185}
+body:not(.editing) .map-state:not(.collected){cursor:default}
+body:not(.editing) .map-state:not(.collected):hover{fill:#3b494d;stroke:var(--panel);stroke-width:1.5}
+.small-states button:disabled{opacity:1;cursor:default}
+.publish-banner{padding:14px 18px;margin-top:20px;background:#263629;border:1px solid #5c754a;border-radius:9px;font-size:14px;line-height:1.5}
+.publish-banner[data-kind=error]{background:#372824;border-color:#b07d6e;color:#ffd9ce}
+.editor-bar{display:flex;justify-content:flex-end;margin-bottom:20px}.editor-bar>div{display:flex;gap:10px}
+#unlock-dialog{max-width:460px}dialog label{display:block;margin:20px 0 8px;font-size:14px}dialog input:not([type=file]),dialog select{display:block;width:100%;background:#101719;color:var(--white);border:1px solid #576569;padding:12px;font:inherit;border-radius:7px}
+#unlock-form .dialog-actions{margin-top:20px}#upload-preview img{max-width:100%;max-height:280px;display:block;margin:18px auto;border-radius:8px}#upload-dialog .dialog-actions{margin-top:24px}#choose-photo{margin-top:16px}#replace-photo{margin-top:4px}
+@media(max-width:700px){.editor-bar{margin-top:4px}.editor-bar button{font-size:14px}}
