@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "revision": "b1a0e29b-510b-4af0-ae04-915416e80d94",
+  "revision": "7903ca0e-f2c7-473f-90cc-e08849c10dfe",
   "plates": {
     "CA": {
       "url": "photos/CA.jpg",
@@ -111,12 +111,12 @@
       }
     },
     "OK": {
-      "url": "photos/OK-e8a9fb2a-6993-4869-8478-6b86e27bd3f0.jpg",
+      "url": "photos/OK-b600df63-0a98-4642-b79f-48dbfa630b12.jpg",
       "crop": {
-        "x": 0.307362,
-        "y": 0.335172,
-        "width": 0.3125,
-        "height": 0.096055
+        "x": 0.001524,
+        "y": 0,
+        "width": 0.996953,
+        "height": 1
       }
     },
     "IN": {
