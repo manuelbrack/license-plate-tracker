@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "revision": "e59a6ff5-d05b-4874-a136-737fa632855c",
+  "revision": "d1116725-78e2-4e36-90e7-ea1e6c556faf",
   "plates": {
     "CA": {
       "url": "photos/CA.jpg",
@@ -197,6 +197,15 @@
         "x": 0.009789,
         "y": 0,
         "width": 0.980421,
+        "height": 1
+      }
+    },
+    "NY": {
+      "url": "photos/NY-b25d99e2-f56f-47b4-83e6-ac5b4f241211.jpg",
+      "crop": {
+        "x": 0.076957,
+        "y": 0,
+        "width": 0.846085,
         "height": 1
       }
     }
